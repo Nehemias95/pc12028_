@@ -1,0 +1,49 @@
+section .data
+mensage db "El resultado de la multiplicacion de dos números enteros es: ", 0xA ; Mensaje a mostrar
+len equ $ - mensage                                                             ; Longitud del mensaje
+
+section .text
+global _start 
+
+_start: 
+    mov al, '7' ; Cargar el carácter
+    sub al, '0' 
+    mov bl, '7' ; Cargar el carácter
+    sub bl, '0' 
+    mul bl      ; Multiplicar AL por BL, resultado en AX.
+    
+    mov bl, 10
+    div bl      
+    
+    add al, '0' 
+    add ah, '0' 
+
+    mov [res_tens], al 
+    mov [res_units], ah 
+
+    mov ecx, mensage 
+    mov edx, len ; Longitud
+    mov ebx, 1   
+    mov eax, 4   ; llamada sys_write
+    int 0x80     
+
+    mov ecx, res_tens
+    mov edx, 1        ; Longitud
+    mov ebx, 1        
+    mov eax, 4        ; llamada sys_write
+    int 0x80          
+
+    mov ecx, res_units ; Dirección
+    mov edx, 1         ; Longitud 
+    mov ebx, 1         
+    mov eax, 4         ; llamada sys_write
+    int 0x80           
+
+    ; Terminar el programa
+    mov eax, 1         ;llamada sys_exit
+    mov ebx, 0         ; salida
+    int 0x80           
+
+segment .bss
+res_tens resb 1 
+res_units resb 1 

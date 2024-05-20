@@ -1,0 +1,48 @@
+section .data
+    msg_quotient db "El cociente es: ", 0xA  ; Mensaje para mostrar el cociente
+    msg_remainder db "El residuo es: ", 0xA  ; Mensaje para mostrar el residuo
+    len_quotient equ $ - msg_quotient       ; Longitud del mensaje del cociente
+    len_remainder equ $ - msg_remainder     ; Longitud del mensaje del residuo
+
+section .bss
+    quotient resd 1   
+    remainder resd 1 
+    dividend resd 1   
+    divisor resd 1    ; Reservar
+
+section .text
+global _start
+
+_start:
+    ; Ingresar los valores del dividendo y divisor
+    mov dword [dividend], 100    ; Ejemplo: Dividendo = 100
+    mov dword [divisor], 5       ; Ejemplo: Divisor = 5
+
+    ; Realizar la división
+    mov eax, dword [dividend]    ; Cargar el dividendo en eax
+    cdq                          
+    mov ebx, dword [divisor]     ; Cargar el divisor en ebx
+    idiv ebx                     ; Dividir edx:eax por el divisor
+
+    ; Guardar el cociente y el residuo
+    mov dword [quotient], eax    ; Guardar el cociente
+    mov dword [remainder], edx   ; Guardar el residuo
+
+    ; Mostrar el cociente
+    mov ecx, msg_quotient        
+    mov edx, len_quotient        ; Longitud
+    mov ebx, 1                  
+    mov eax, 4                   ; llamada sys_write
+    int 0x80                    
+
+    ; Mostrar el residuo
+    mov ecx, msg_remainder      
+    mov edx, len_remainder       ; Longitud 
+    mov ebx, 1                   
+    mov eax, 4                   ; llamada sys_write
+    int 0x80                     
+
+    ; Terminar el programa
+    mov eax, 1                   ; Número de llamada del sistema (sys_exit)
+    xor ebx, ebx                 ; Código de salida 0
+    int 0x80                     

@@ -1,0 +1,35 @@
+section .data
+    msg db "El resultado es: ", 0xA  ; Mensaje a mostrar
+    len equ $ - msg                  ; Longitud del mensaje
+
+section .bss
+    res resw 1                      ; Reservar 2 bytes (1 palabra) para el resultado
+
+section .text
+global _start
+
+_start:
+    ; Restar los números
+    mov ax, 15           ; Cargar el primer número en AX
+    sub ax, 5            ; Restar el segundo número de AX
+    sub ax, 3            ; Restar el tercer número de AX
+    mov [res], ax        ; Guardar el resultado en la variable res
+
+    ; Mostrar mensaje en pantalla
+    mov ecx, msg         ; Dirección del mensaje
+    mov edx, len         ; Longitud del mensaje
+    mov ebx, 1           ; Descriptor de archivo (1 para stdout)
+    mov eax, 4           ; Número de llamada del sistema (sys_write)
+    int 0x80             ; Llamada al kernel
+
+    ; Mostrar el resultado de la resta
+    mov ecx, res         ; Dirección del resultado
+    mov edx, 2           ; Longitud del resultado (2 bytes)
+    mov ebx, 1           ; Descriptor de archivo (1 para stdout)
+    mov eax, 4           ; Número de llamada del sistema (sys_write)
+    int 0x80             ; Llamada al kernel
+
+    ; Terminar el programa
+    mov eax, 1           ; Número de llamada del sistema (sys_exit)
+    xor ebx, ebx         ; Código de salida 0
+    int 0x80             ; Llamada al kernel
